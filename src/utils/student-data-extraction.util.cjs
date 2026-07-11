@@ -22,7 +22,6 @@ for (let [_, item] of Object.entries(studentdata)) {
   const rawFavItemTags = item["FavorItemTags"];
   const rawFavItemUniqueTags = item["FavorItemUniqueTags"];
   let favItems = [];
-  let favItemsUnique = [];
   for (let [_, itemData] of Object.entries(items)) {
     const itemDataSet = itemData.tags;
     if (itemDataSet.some((e) => rawFavItemTags.includes(e))) {
@@ -44,10 +43,10 @@ for (let [_, item] of Object.entries(studentdata)) {
     position: item["Position"],
     weaponType: item["WeaponType"],
     exSkillCost: item["Skills"]["Ex"]["Cost"][4],
-    height: item["CharHeightMetric"],
+    height: parseInt(item["CharHeightMetric"].replace(/cm/g, "")),
+    year: parseInt(item["SchoolYear"].replace(/st|nd|rd|Year|\s/g, "")),
     birthday: item["Birthday"],
     favItem: favItems,
-    favItemsUnique: favItemsUnique,
   };
 }
 

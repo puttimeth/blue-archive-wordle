@@ -1,0 +1,28 @@
+.squad-type-label {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  height: 34px;
+  padding: 0 12px;
+  border-radius: 8px;
+
+  > span {
+    color: #ffffff;
+    font-style: italic;
+    font-weight: 700;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .squad-type-label {
+    padding: 0 4px;
+  }
+}
+
+@media only screen and (max-width: 350px) {
+  .squad-type-label > span {
+    font-weight: 500;
+    font-size: 14px;
+  }
+}

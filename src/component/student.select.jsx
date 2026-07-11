@@ -2,7 +2,11 @@ import "./student.select.scss";
 import { Avatar, Select } from "antd";
 import { studentData } from "data";
 
-export const StudentSelect = ({ selectedStudents = [] }) => {
+export const StudentSelect = ({
+  selectedStudentsId = [],
+  onChange = (e) => {},
+  ...rest
+}) => {
   return (
     <Select
       className="student-select"
@@ -13,12 +17,13 @@ export const StudentSelect = ({ selectedStudents = [] }) => {
           .includes(input.toLowerCase())
       }
       placeholder="Student name"
+      listHeight={512}
       value=""
-      onChange={(e) => {}}
+      onChange={onChange}
       options={
         studentData && Object.entries(studentData).length > 0
           ? Object.entries(studentData)
-              .filter(([k, _]) => !selectedStudents.includes(k))
+              .filter(([k, _]) => !selectedStudentsId.includes(k))
               .map(([elementKey, elementValue], idx) => ({
                 key: `student-option-${elementKey}`,
                 value: elementKey,
@@ -64,7 +69,10 @@ export const StudentSelect = ({ selectedStudents = [] }) => {
         position: "relative",
         zIndex: "1000",
       }}
+      dropdownStyle={{ maxHeight: "calc(100vh - 200px)" }}
       notFoundContent={<span></span>}
+      virtual={false}
+      {...rest}
     />
   );
 };

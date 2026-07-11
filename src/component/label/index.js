@@ -1,5 +1,7 @@
 export * from "./attack-defense-type.label";
 
+export * from "./gift.label";
+
 export * from "./role.label";
 
 export * from "./school.label";

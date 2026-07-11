@@ -6,14 +6,15 @@ import { MdHelpOutline, MdOutlineSettings } from "react-icons/md";
 export const Header = ({ setConfigModalStatus, setHelpModalStatus }) => {
   return (
     <div className="header">
-      <Button
+      {/* <Button
         className="icon-btn config-btn"
         onClick={() => {
           setConfigModalStatus(true);
         }}
       >
         <MdOutlineSettings />
-      </Button>
+      </Button> */}
+      <span>Guess student</span>
       <div>
         <Button
           className="icon-btn"
