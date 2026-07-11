@@ -1,0 +1,34 @@
+.role-label {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  height: 32px;
+  width: 100%;
+  padding: 0 4px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  background-color: #ffffff;
+
+  > img {
+    height: 28px;
+    width: auto;
+    filter: brightness(0) saturate(100%);
+  }
+}
+
+@media only screen and (max-width: 750px) {
+  .role-label {
+    height: 100%;
+    border: none;
+    background-color: transparent;
+
+    > img {
+      height: min(100%, 44px);
+    }
+
+    > span {
+      display: none;
+    }
+  }
+}

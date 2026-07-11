@@ -1,0 +1,15 @@
+.student-select.ant-select-dropdown {
+  * {
+    font-family: -apple-system, "Nunito Sans", "Noto Sans Thai", sans-serif;
+  }
+
+  .ant-select-item {
+    padding: 4px;
+  }
+}
+
+.ant-select-show-search.ant-select:not(.ant-select-customize-input)
+  .ant-select-selector
+  input {
+  font-size: 18px;
+}

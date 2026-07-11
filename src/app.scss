@@ -1,0 +1,90 @@
+.app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 64px 16px 16px 16px;
+}
+
+.bg-image {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-image: url("./images/background/all-favor-bg.webp");
+  background-repeat: repeat;
+  background-size: 798px 630px;
+  filter: blur(5px) opacity(35%);
+}
+
+.guess-table {
+  position: relative;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(100%, 1000px);
+
+  > div {
+    display: grid;
+    grid-template-columns:
+      minmax(min(8.6%, 80px), 80px)
+      minmax(min(8.6%, 100px), 100px) 12% 15% 15% 15% 1fr 1fr;
+    gap: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #000000;
+
+    > b {
+      text-align: center;
+    }
+
+    > .content-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #a7a7a7;
+      padding: 4px;
+      height: 80px;
+
+      .student-img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+      }
+
+      &.correct {
+        background-color: #c6ffc6;
+      }
+
+      &.partial {
+        background-color: #fffbc6;
+      }
+
+      &.wrong {
+        background-color: #ffc6c6;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 1050px) {
+  .guess-table > div {
+    grid-template-columns: 25% 25% 25% 1fr;
+
+    > .content-item > .student-img {
+      height: 100%;
+      width: auto;
+    }
+  }
+}
+
+@media only screen and (max-width: 850px) {
+}
+
+@media only screen and (max-width: 650px) {
+}
