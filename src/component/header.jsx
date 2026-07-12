@@ -7,7 +7,9 @@ export const Header = ({ setHelpModalStatus }) => {
   return (
     <div className="header">
       <div></div>
-      <span>Guess student</span>
+      <div>
+        <span>Guess student</span>
+      </div>
       <div>
         <Button
           className="icon-btn"
