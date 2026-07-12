@@ -1,19 +1,12 @@
 import "./header.scss";
 import { Button } from "antd";
 import React from "react";
-import { MdHelpOutline, MdOutlineSettings } from "react-icons/md";
+import { MdHelpOutline } from "react-icons/md";
 
-export const Header = ({ setConfigModalStatus, setHelpModalStatus }) => {
+export const Header = ({ setHelpModalStatus }) => {
   return (
     <div className="header">
-      {/* <Button
-        className="icon-btn config-btn"
-        onClick={() => {
-          setConfigModalStatus(true);
-        }}
-      >
-        <MdOutlineSettings />
-      </Button> */}
+      <div></div>
       <span>Guess student</span>
       <div>
         <Button

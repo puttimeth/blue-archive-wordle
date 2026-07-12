@@ -1,6 +1,12 @@
 import "./app.scss";
 import { Button } from "antd";
-import { GameModeRadio, GuessTable, Header, StudentSelect } from "component";
+import {
+  GameModeRadio,
+  GuessTable,
+  Header,
+  HelpModal,
+  StudentSelect,
+} from "component";
 import { ContentCategory, GameMode, LSK, StudentData } from "data";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -24,10 +30,11 @@ function App() {
   const [guessStudentsId, setGuessStudentsId] = useState([]);
   const [targetStudentId, setTargetStudentId] = useState("");
   const [yesterdayTargetStudentId, setYesterdayTargetStudentId] = useState("");
-  // const [today, setToday] = useState(Util.getToday());
-  // const [yesterday, setYesterday] = useState(Util.getYesterday());
   const [remainingTimeUntilDailyRefresh, setRemainingTimeUntilDailyRefresh] =
     useState("");
+
+  // modal
+  const [helpModalStatus, setHelpModalStatus] = useState(false);
 
   const randomTargetStudent = () => {
     const randIdx = Math.floor(Math.random() * Object.keys(StudentData).length);
@@ -154,9 +161,13 @@ function App() {
 
   return (
     <>
+      <HelpModal
+        modalStatus={helpModalStatus}
+        setModalStatus={setHelpModalStatus}
+      />
       <div className="app">
         <div className="bg-image" />
-        <Header />
+        <Header setHelpModalStatus={setHelpModalStatus} />
         <GameModeRadio
           contentCategory={contentCategory}
           setContentCategory={setContentCategory}
