@@ -1,11 +1,11 @@
 import { ConfigProvider, Radio } from "antd";
-import { GuessGameMode, GuessPlayMode, LSK } from "data";
+import { ContentCategory, GameMode, LSK } from "data";
 
 export const GameModeRadio = ({
+  contentCategory,
+  setContentCategory,
   gameMode,
   setGameMode,
-  playMode,
-  setPlayMode,
 }) => {
   return (
     <div
@@ -26,16 +26,16 @@ export const GameModeRadio = ({
       >
         <Radio.Group
           block
-          options={Object.entries(GuessGameMode).map(([_, v]) => ({
+          options={Object.entries(ContentCategory).map(([_, v]) => ({
             value: v,
             label: v,
           }))}
-          defaultValue={gameMode}
+          defaultValue={contentCategory}
           optionType="button"
           buttonStyle="solid"
           onChange={(e) => {
-            setGameMode(e.target.value);
-            localStorage.setItem(LSK.selectedGameMode, e.target.value);
+            setContentCategory(e.target.value);
+            localStorage.setItem(LSK.selectedContentCategory, e.target.value);
           }}
         />
       </ConfigProvider>
@@ -48,16 +48,16 @@ export const GameModeRadio = ({
       >
         <Radio.Group
           block
-          options={Object.entries(GuessPlayMode).map(([_, v]) => ({
+          options={Object.entries(GameMode).map(([_, v]) => ({
             value: v,
             label: v,
           }))}
-          defaultValue={playMode}
+          defaultValue={gameMode}
           optionType="button"
           buttonStyle="solid"
           onChange={(e) => {
-            setPlayMode(e.target.value);
-            localStorage.setItem(LSK.selectedPlayMode, e.target.value);
+            setGameMode(e.target.value);
+            localStorage.setItem(LSK.selectedGameMode, e.target.value);
           }}
         />
       </ConfigProvider>

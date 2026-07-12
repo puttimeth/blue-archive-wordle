@@ -1,9 +1,9 @@
-export const GuessGameMode = {
+export const ContentCategory = {
   Gameplay: "Gameplay",
   Lore: "Lore",
 };
 
-export const GuessPlayMode = {
+export const GameMode = {
   Daily: "Daily",
   Endless: "Endless",
 };

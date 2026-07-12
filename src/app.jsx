@@ -1,7 +1,7 @@
 import "./app.scss";
 import { Button } from "antd";
 import { GameModeRadio, GuessTable, Header, StudentSelect } from "component";
-import { GuessGameMode, GuessPlayMode, LSK, StudentData } from "data";
+import { ContentCategory, GameMode, LSK, StudentData } from "data";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
@@ -14,11 +14,12 @@ function App() {
 
   const [isGameRunning, setIsGameRunning] = useState(true);
   const [isGiveUp, setIsGiveUp] = useState(false);
-  const [gameMode, setGameMode] = useState(
-    localStorage.getItem(LSK.selectedGameMode) ?? GuessGameMode.Gameplay,
+  const [contentCategory, setContentCategory] = useState(
+    localStorage.getItem(LSK.selectedContentCategory) ??
+      ContentCategory.Gameplay,
   );
-  const [playMode, setPlayMode] = useState(
-    localStorage.getItem(LSK.selectedPlayMode) ?? GuessPlayMode.Daily,
+  const [gameMode, setGameMode] = useState(
+    localStorage.getItem(LSK.selectedGameMode) ?? GameMode.Daily,
   );
   const [guessStudentsId, setGuessStudentsId] = useState([]);
   const [targetStudentId, setTargetStudentId] = useState("");
@@ -47,7 +48,7 @@ function App() {
 
   const updateYesterdayStudent = () => {
     const randIdx = Util.getSeededRandomFromDate(
-      gameMode,
+      contentCategory,
       yesterday,
       0,
       Object.keys(StudentData).length,
@@ -72,17 +73,17 @@ function App() {
 
   const restartGame = () => {
     let assignedStudentId = "";
-    if (playMode === GuessPlayMode.Daily) {
-      assignedStudentId = assignTargetStudent(gameMode);
+    if (gameMode === GameMode.Daily) {
+      assignedStudentId = assignTargetStudent(contentCategory);
     } else {
       randomTargetStudent();
     }
     updateYesterdayStudent();
     setIsGameRunning(true);
     setIsGiveUp(false);
-    if (playMode === GuessPlayMode.Daily) {
+    if (gameMode === GameMode.Daily) {
       let lsk = LSK.dailyGuessGameplay;
-      if (gameMode === GuessGameMode.Lore) {
+      if (contentCategory === ContentCategory.Lore) {
         lsk = LSK.dailyGuessLore;
       }
       let saveData = localStorage.getItem(lsk);
@@ -133,10 +134,10 @@ function App() {
 
   useEffect(() => {
     restartGame();
-  }, [gameMode, playMode]);
+  }, [contentCategory, gameMode]);
 
   useEffect(() => {
-    if (playMode === GuessPlayMode.Daily) {
+    if (gameMode === GameMode.Daily) {
       // update local storage
       const saveData = {
         date: today.format("YYYY-MM-DD"),
@@ -144,7 +145,7 @@ function App() {
         isGiveUp,
       };
       let lsk = LSK.dailyGuessGameplay;
-      if (gameMode === GuessGameMode.Lore) {
+      if (contentCategory === ContentCategory.Lore) {
         lsk = LSK.dailyGuessLore;
       }
       localStorage.setItem(lsk, JSON.stringify(saveData));
@@ -157,10 +158,10 @@ function App() {
         <div className="bg-image" />
         <Header />
         <GameModeRadio
+          contentCategory={contentCategory}
+          setContentCategory={setContentCategory}
           gameMode={gameMode}
           setGameMode={setGameMode}
-          playMode={playMode}
-          setPlayMode={setPlayMode}
         />
         {/* Answer student label */}
         {!isGameRunning && (
@@ -171,8 +172,8 @@ function App() {
               alt=""
             />
             <span style={{ textAlign: "center" }}>
-              The{playMode === GuessPlayMode.Daily ? " daily" : ""} mystery
-              student is <b>{StudentData[targetStudentId]?.name}</b>
+              The{gameMode === GameMode.Daily ? " daily" : ""} mystery student
+              is <b>{StudentData[targetStudentId]?.name}</b>
             </span>
             {!isGiveUp && (
               <span>You did it in {guessStudentsId.length} tries!</span>
@@ -181,7 +182,7 @@ function App() {
           </div>
         )}
         {/* Count down new day label */}
-        {!isGameRunning && playMode === GuessPlayMode.Daily && (
+        {!isGameRunning && gameMode === GameMode.Daily && (
           <span style={{ textAlign: "center" }}>
             Daily mystery student refreshs in {remainingTimeUntilDailyRefresh}
           </span>
@@ -194,13 +195,13 @@ function App() {
           />
         )}
         {/* Restart game button */}
-        {!isGameRunning && playMode === GuessPlayMode.Endless && (
+        {!isGameRunning && gameMode === GameMode.Endless && (
           <Button color="default" variant="solid" onClick={restartGame}>
             <IoMdRefresh size={24} />
           </Button>
         )}
         <GuessTable
-          gameMode={gameMode}
+          contentCategory={contentCategory}
           guessStudentsId={guessStudentsId}
           targetStudentId={targetStudentId}
         />
@@ -224,7 +225,7 @@ function App() {
             </Button>
           )}
         {/* Yesterday's student label */}
-        {playMode === GuessPlayMode.Daily && guessStudentsId.length === 0 && (
+        {gameMode === GameMode.Daily && guessStudentsId.length === 0 && (
           <div className="mystery-student-answer">
             <img
               className="student-img"

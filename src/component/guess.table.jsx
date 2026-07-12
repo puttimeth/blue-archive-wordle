@@ -8,18 +8,22 @@ import {
 } from "./label";
 import {
   Club,
-  GuessGameMode,
+  ContentCategory,
   GuessGameplayColumns,
   GuessLoreColumns,
   StudentData,
   StudentReleaseDate,
 } from "data";
 
-export const GuessTable = ({ gameMode, guessStudentsId, targetStudentId }) => {
+export const GuessTable = ({
+  contentCategory,
+  guessStudentsId,
+  targetStudentId,
+}) => {
   return (
-    <div className={`guess-table ${gameMode.toLowerCase()}`}>
+    <div className={`guess-table ${contentCategory.toLowerCase()}`}>
       <div>
-        {(gameMode === GuessGameMode.Gameplay
+        {(contentCategory === ContentCategory.Gameplay
           ? GuessGameplayColumns
           : GuessLoreColumns
         ).map((item) => (
@@ -58,7 +62,7 @@ export const GuessTable = ({ gameMode, guessStudentsId, targetStudentId }) => {
           giftCompareState = "partial";
         }
 
-        if (gameMode === GuessGameMode.Gameplay)
+        if (contentCategory === ContentCategory.Gameplay)
           return (
             <div key={studentId}>
               <div
@@ -121,7 +125,7 @@ export const GuessTable = ({ gameMode, guessStudentsId, targetStudentId }) => {
               </div>
             </div>
           );
-        else if (gameMode === GuessGameMode.Lore)
+        else if (contentCategory === ContentCategory.Lore)
           return (
             <div key={studentId}>
               <div
