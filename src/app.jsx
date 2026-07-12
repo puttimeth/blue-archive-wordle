@@ -23,6 +23,7 @@ function App() {
     "Defense Type",
     "Weapon Type",
     "EX Skill Cost",
+    "Release Date",
   ];
   const guessLoreColumns = [
     "Student",
@@ -237,6 +238,16 @@ function App() {
                       {studentValue.exSkillCost}
                     </span>
                   </div>
+                  <div
+                    className={`content-item ${targetStudentValueReleaseDate.getTime() === studentValueReleaseDate.getTime() ? "correct" : "wrong"} ${targetStudentValueReleaseDate > studentValueReleaseDate ? "more" : ""} ${targetStudentValueReleaseDate < studentValueReleaseDate ? "less" : ""}`}
+                  >
+                    <span style={{ textAlign: "center" }}>
+                      {studentValueReleaseDate.getFullYear()}{" "}
+                      {studentValueReleaseDate.toLocaleDateString("en-US", {
+                        month: "long",
+                      })}
+                    </span>
+                  </div>
                 </div>
               );
             else if (gameMode === GuessGameMode.Lore)
@@ -306,19 +317,21 @@ function App() {
         </div>
         {guessStudentsId.length === 0 && (
           <div className="pick-someone-container">
-            <Button onClick={chooseRandomStudent}>Pick for me</Button>
+            <Button onClick={chooseRandomStudent}>Pick someone for me</Button>
           </div>
         )}
-        {guessStudentsId.length >= minGuessToGiveUp && !isGiveUp && (
-          <Button
-            color="danger"
-            variant="solid"
-            onClick={giveUp}
-            style={{ fontSize: "16px" }}
-          >
-            I give up
-          </Button>
-        )}
+        {!isGameRunning &&
+          !isGiveUp &&
+          guessStudentsId.length >= minGuessToGiveUp && (
+            <Button
+              color="danger"
+              variant="solid"
+              onClick={giveUp}
+              style={{ fontSize: "16px" }}
+            >
+              I give up
+            </Button>
+          )}
       </div>
     </>
   );

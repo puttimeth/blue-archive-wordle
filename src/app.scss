@@ -73,10 +73,10 @@
   &.gameplay > div {
     grid-template-columns:
       minmax(min(8.6%, 80px), 80px)
-      minmax(min(8.6%, 80px), 80px) calc(12% - 8px) calc(15% - 8px) calc(
-        15% - 8px
+      minmax(min(8.6%, 90px), 90px) calc(12% - 8px) calc(12% - 8px) calc(
+        12% - 8px
       )
-      calc(15% - 8px) 1fr 1fr;
+      calc(12% - 8px) 1fr 1fr calc(12% - 8px);
 
     &:not(:first-of-type) {
       grid-template-rows: 92px;
@@ -104,6 +104,9 @@
     }
 
     > b {
+      display: flex;
+      justify-content: center;
+      align-items: center;
       text-align: center;
       border-bottom: 2px solid #000000;
     }
