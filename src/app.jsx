@@ -9,7 +9,7 @@ import {
   SquadTypeLabel,
   StudentSelect,
 } from "component";
-import { Club, GuessGameMode, studentData } from "data";
+import { Club, GuessGameMode, StudentData, StudentReleaseDate } from "data";
 import React, { useEffect, useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
 
@@ -32,18 +32,21 @@ function App() {
     "Height (cm)",
     "Birthday",
     "Weapon Type",
+    "Release Date",
     "Fav SSR Gift",
   ];
+  const minGuessToGiveUp = 5;
 
   const [isGameRunning, setIsGameRunning] = useState(true);
+  const [isGiveUp, setIsGiveUp] = useState(false);
   const [gameMode, setGameMode] = useState(GuessGameMode.Gameplay);
   const [guessStudentsId, setGuessStudentsId] = useState([]);
   const [targetStudentId, setTargetStudentId] = useState("");
 
   const randomTargetStudent = () => {
-    const randIdx = Math.floor(Math.random() * Object.keys(studentData).length);
-    setTargetStudentId(Object.keys(studentData)[randIdx]);
-    // console.log(studentData[Object.keys(studentData)[randIdx]]?.name);
+    const randIdx = Math.floor(Math.random() * Object.keys(StudentData).length);
+    setTargetStudentId(Object.keys(StudentData)[randIdx]);
+    // console.log(StudentData[Object.keys(StudentData)[randIdx]]?.name);
   };
 
   const chooseStudent = (studentId) => {
@@ -55,6 +58,12 @@ function App() {
     }
   };
 
+  const chooseRandomStudent = () => {
+    const randIdx = Math.floor(Math.random() * Object.keys(StudentData).length);
+    const studentId = Object.keys(StudentData)[randIdx];
+    chooseStudent(studentId);
+  };
+
   const changeGameMode = (newGameMode) => {
     setGameMode(newGameMode);
     restartGame();
@@ -63,11 +72,22 @@ function App() {
   const restartGame = () => {
     randomTargetStudent();
     setIsGameRunning(true);
+    setIsGiveUp(false);
     setGuessStudentsId([]);
+  };
+
+  const giveUp = () => {
+    setIsGameRunning(false);
+    setIsGiveUp(true);
   };
 
   useEffect(() => {
     restartGame();
+    // for (let item of Object.values(StudentData)) {
+    //   if (!StudentReleaseDate[item.name]) {
+    //     console.log(item.name);
+    //   }
+    // }
   }, []);
 
   return (
@@ -96,7 +116,7 @@ function App() {
             }}
           />
         </ConfigProvider>
-        {!isGameRunning && guessStudentsId.at(-1) === targetStudentId && (
+        {!isGameRunning && (
           <div className="mystery-student-answer">
             <img
               className="student-img"
@@ -104,8 +124,12 @@ function App() {
               alt=""
             />
             <span>
-              The mystery student is <b>{studentData[targetStudentId]?.name}</b>
+              The mystery student is <b>{StudentData[targetStudentId]?.name}</b>
             </span>
+            {!isGiveUp && (
+              <span>You did it in {guessStudentsId.length} tries!</span>
+            )}
+            {isGiveUp && <span>How did she slip your mind?</span>}
           </div>
         )}
         {isGameRunning && (
@@ -130,14 +154,20 @@ function App() {
             ))}
           </div>
           {guessStudentsId.toReversed().map((studentId) => {
-            const targetStudentValue = studentData[targetStudentId];
-            const studentValue = studentData[studentId];
+            const targetStudentValue = StudentData[targetStudentId];
+            const studentValue = StudentData[studentId];
             let giftCompareState = "wrong";
             const targetStudentValueBirthday = new Date(
               targetStudentValue.birthday.replace(/st|nd|rd|th/g, ""),
             );
             const studentValueBirthday = new Date(
               studentValue.birthday.replace(/st|nd|rd|th/g, ""),
+            );
+            const targetStudentValueReleaseDate = new Date(
+              StudentReleaseDate[targetStudentValue.name],
+            );
+            const studentValueReleaseDate = new Date(
+              StudentReleaseDate[studentValue.name],
             );
 
             if (
@@ -244,7 +274,7 @@ function App() {
                     <span>{studentValue.height}</span>
                   </div>
                   <div
-                    className={`content-item ${targetStudentValue.birthday === studentValue.birthday ? "correct" : "wrong"} ${targetStudentValueBirthday > studentValueBirthday ? "more" : ""} ${targetStudentValueBirthday < targetStudentValueBirthday ? "less" : ""}`}
+                    className={`content-item ${targetStudentValue.birthday === studentValue.birthday ? "correct" : "wrong"} ${targetStudentValueBirthday > studentValueBirthday ? "more" : ""} ${targetStudentValueBirthday < studentValueBirthday ? "less" : ""}`}
                   >
                     <span style={{ textAlign: "center" }}>
                       {studentValue.birthday}
@@ -257,16 +287,38 @@ function App() {
                       {studentValue.weaponType}
                     </span>
                   </div>
+                  <div
+                    className={`content-item ${targetStudentValueReleaseDate.getTime() === studentValueReleaseDate.getTime() ? "correct" : "wrong"} ${targetStudentValueReleaseDate > studentValueReleaseDate ? "more" : ""} ${targetStudentValueReleaseDate < studentValueReleaseDate ? "less" : ""}`}
+                  >
+                    <span style={{ textAlign: "center" }}>
+                      {studentValueReleaseDate.getFullYear()}{" "}
+                      {studentValueReleaseDate.toLocaleDateString("en-US", {
+                        month: "long",
+                      })}
+                    </span>
+                  </div>
                   <div className={`content-item ${giftCompareState}`}>
                     <GiftLabel gifts={studentValue.favItem} />
                   </div>
                 </div>
               );
           })}
-          {guessStudentsId.length === 0 && (
-            <span style={{ textAlign: "center" }}>Pick someone.</span>
-          )}
         </div>
+        {guessStudentsId.length === 0 && (
+          <div className="pick-someone-container">
+            <Button onClick={chooseRandomStudent}>Pick for me</Button>
+          </div>
+        )}
+        {guessStudentsId.length >= minGuessToGiveUp && !isGiveUp && (
+          <Button
+            color="danger"
+            variant="solid"
+            onClick={giveUp}
+            style={{ fontSize: "16px" }}
+          >
+            I give up
+          </Button>
+        )}
       </div>
     </>
   );

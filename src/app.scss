@@ -68,18 +68,30 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: min(100%, 1000px);
+  width: min(100%, 1200px);
 
   &.gameplay > div {
     grid-template-columns:
       minmax(min(8.6%, 80px), 80px)
-      minmax(min(8.6%, 100px), 100px) 12% 15% 15% 15% 1fr 1fr;
+      minmax(min(8.6%, 80px), 80px) calc(12% - 8px) calc(15% - 8px) calc(
+        15% - 8px
+      )
+      calc(15% - 8px) 1fr 1fr;
+
+    &:not(:first-of-type) {
+      grid-template-rows: 92px;
+    }
   }
 
   &.lore > div {
     grid-template-columns:
-      minmax(min(8.6%, 80px), 80px)
-      minmax(min(8.6%, 100px), 100px) 12% 14% 8% 13% 9% 1fr;
+      minmax(min(8.6%, 80px), 80px) minmax(min(8.6%, 80px), 80px) calc(6% - 8px)
+      calc(14% - 8px) calc(8% - 8px)
+      calc(10% - 8px) calc(9% - 8px) calc(10% - 8px) 1fr;
+
+    &:not(:first-of-type) {
+      grid-template-rows: 92px;
+    }
   }
 
   > div {
@@ -87,12 +99,13 @@
     gap: 8px;
     padding-bottom: 8px;
 
-    &:not(:last-of-type) {
+    &:not(:first-of-type):not(:last-of-type) {
       border-bottom: 2px solid #000000;
     }
 
     > b {
       text-align: center;
+      border-bottom: 2px solid #000000;
     }
 
     > .content-item {
@@ -102,7 +115,8 @@
       align-items: center;
       border: 2px solid #a7a7a7;
       padding: 4px;
-      height: 80px;
+      min-height: 80px;
+      max-height: 100px;
 
       .student-img {
         width: 100%;
@@ -166,16 +180,34 @@
   }
 }
 
+.pick-someone-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  > button > span {
+    font-size: 16px;
+  }
+}
+
 @media only screen and (max-width: 1050px) {
   .guess-table.gameplay > div {
-    grid-template-columns: 25% 25% 25% 1fr;
+    grid-template-columns: repeat(2, calc(25% - 8px)) calc(30% - 8px) 1fr;
+
+    &:not(:first-of-type) {
+      grid-template-rows: repeat(2, 92px);
+    }
   }
 
   .guess-table.lore > div {
-    grid-template-columns: 25% 25% 25% 1fr;
+    grid-template-columns: repeat(3, calc(25% - 8px * 2)) 1fr;
 
-    > :nth-child(7n + 7) {
-      grid-column: span 2;
+    &:not(:first-of-type) {
+      grid-template-rows: repeat(3, 92px);
+    }
+
+    > :nth-child(9n + 9) {
+      grid-column: span 4;
     }
   }
 
@@ -185,14 +217,16 @@
   }
 }
 
-@media only screen and (max-width: 400px) {
-  .guess-table > div {
-    > .content-item > .student-img {
-      width: 100%;
-      height: auto;
-    }
+@media only screen and (max-width: 550px) {
+  .guess-table.lore > div > .content-item > .student-img {
+    width: 100%;
+    height: auto;
   }
 }
 
-@media only screen and (max-width: 650px) {
+@media only screen and (max-width: 500px) {
+  .guess-table.gameplay > div > .content-item > .student-img {
+    width: 100%;
+    height: auto;
+  }
 }

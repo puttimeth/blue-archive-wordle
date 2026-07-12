@@ -1,6 +1,6 @@
 import "./student.select.scss";
 import { Avatar, Select } from "antd";
-import { studentData } from "data";
+import { StudentData } from "data";
 
 export const StudentSelect = ({
   selectedStudentsId = [],
@@ -12,7 +12,7 @@ export const StudentSelect = ({
       className="student-select"
       showSearch={true}
       filterOption={(input, option) =>
-        (studentData[option?.value]?.name ?? "")
+        (StudentData[option?.value]?.name ?? "")
           .toLowerCase()
           .includes(input.toLowerCase())
       }
@@ -21,10 +21,11 @@ export const StudentSelect = ({
       value=""
       onChange={onChange}
       options={
-        studentData && Object.entries(studentData).length > 0
-          ? Object.entries(studentData)
+        StudentData && Object.entries(StudentData).length > 0
+          ? Object.entries(StudentData)
               .filter(([k, _]) => !selectedStudentsId.includes(k))
-              .map(([elementKey, elementValue], idx) => ({
+              .sort((a, b) => a[1].name.localeCompare(b[1].name))
+              .map(([elementKey, elementValue]) => ({
                 key: `student-option-${elementKey}`,
                 value: elementKey,
                 label: (
@@ -39,8 +40,6 @@ export const StudentSelect = ({
                     <Avatar
                       src={`/students/${elementKey}.webp`}
                       style={{
-                        // backgroundColor:
-                        //   BankInputLogoBackgroundColor[elementKey] ?? "#1f1f1f",
                         borderRadius: "5px",
                         width: "50px",
                         height: "50px",
@@ -64,12 +63,12 @@ export const StudentSelect = ({
           : []
       }
       style={{
-        height: "58px",
-        width: "min(100%, 500px)",
+        height: "42px",
+        width: "min(100%, 300px)",
         position: "relative",
         zIndex: "1000",
       }}
-      dropdownStyle={{ maxHeight: "calc(100vh - 200px)" }}
+      styles={{ popup: { root: { maxHeight: "calc(100vh - 200px)" } } }}
       notFoundContent={<span></span>}
       virtual={false}
       {...rest}

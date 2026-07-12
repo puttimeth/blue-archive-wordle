@@ -1,4 +1,5 @@
-import studentData from "./student-data.json";
+import StudentData from "./student-data.json";
+import StudentReleaseDate from "./student-release-date.json";
 
 export const StudentRole = {
   Tanker: "Tank",
@@ -100,4 +101,4 @@ export const Club = {
   FoxSquad: "FOX Squad",
 };
 
-export { studentData };
+export { StudentData, StudentReleaseDate };
