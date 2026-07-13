@@ -29,6 +29,7 @@ export const GameModeRadio = ({
           options={Object.entries(ContentCategory).map(([_, v]) => ({
             value: v,
             label: v,
+            className: "cannot-select",
           }))}
           defaultValue={contentCategory}
           optionType="button"
@@ -51,6 +52,7 @@ export const GameModeRadio = ({
           options={Object.entries(GameMode).map(([_, v]) => ({
             value: v,
             label: v,
+            className: "cannot-select",
           }))}
           defaultValue={gameMode}
           optionType="button"

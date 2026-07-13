@@ -182,7 +182,7 @@ function App() {
               src={`/students/${targetStudentId}.webp`}
               alt=""
             />
-            <span style={{ textAlign: "center" }}>
+            <span className="text-center">
               The{gameMode === GameMode.Daily ? " daily" : ""} mystery student
               is <b>{StudentData[targetStudentId]?.name}</b>
             </span>
@@ -194,7 +194,7 @@ function App() {
         )}
         {/* Count down new day label */}
         {!isGameRunning && gameMode === GameMode.Daily && (
-          <span style={{ textAlign: "center" }}>
+          <span className="text-center">
             Daily mystery student refreshs in {remainingTimeUntilDailyRefresh}
           </span>
         )}

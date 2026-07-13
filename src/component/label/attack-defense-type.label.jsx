@@ -32,7 +32,7 @@ export const AttackDefenseTypeLabel = ({ type }) => {
       >
         <img src={`/type/Type_${attackOrDefense}.png`} alt="" />
       </div>
-      <span className="text">
+      <span className="text cannot-select">
         {Object.keys(StudentAttackType).includes(type)
           ? StudentAttackType[type]
           : StudentDefenseType[type]}

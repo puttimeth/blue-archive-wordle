@@ -8,6 +8,8 @@ export const SquadTypeLabel = ({ type }) => (
       backgroundColor: type === "Main" ? "#CC1A25" : "#006BFF",
     }}
   >
-    <span>{type === "Main" ? "STRIKER" : "SPECIAL"}</span>
+    <span className="cannot-select">
+      {type === "Main" ? "STRIKER" : "SPECIAL"}
+    </span>
   </div>
 );

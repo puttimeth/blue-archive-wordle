@@ -27,7 +27,9 @@ export const GuessTable = ({
           ? GuessGameplayColumns
           : GuessLoreColumns
         ).map((item) => (
-          <b key={item}>{item}</b>
+          <b key={item} className="cannot-select">
+            {item}
+          </b>
         ))}
       </div>
       {guessStudentsId.toReversed().map((studentId) => {
@@ -102,21 +104,21 @@ export const GuessTable = ({
               <div
                 className={`content-item ${targetStudentValue.weaponType === studentValue.weaponType ? "correct" : "wrong"}`}
               >
-                <span style={{ fontSize: "20px" }}>
+                <span className="cannot-select font-size-large">
                   {studentValue.weaponType}
                 </span>
               </div>
               <div
                 className={`content-item ${targetStudentValue.exSkillCost === studentValue.exSkillCost ? "correct" : "wrong"} ${targetStudentValue.exSkillCost > studentValue.exSkillCost ? "more" : ""} ${targetStudentValue.exSkillCost < studentValue.exSkillCost ? "less" : ""}`}
               >
-                <span style={{ fontSize: "20px" }}>
+                <span className="cannot-select font-size-large">
                   {studentValue.exSkillCost}
                 </span>
               </div>
               <div
                 className={`content-item ${targetStudentValueReleaseDate.getTime() === studentValueReleaseDate.getTime() ? "correct" : "wrong"} ${targetStudentValueReleaseDate > studentValueReleaseDate ? "more" : ""} ${targetStudentValueReleaseDate < studentValueReleaseDate ? "less" : ""}`}
               >
-                <span style={{ textAlign: "center" }}>
+                <span className="cannot-select text-center">
                   {studentValueReleaseDate.getFullYear()}{" "}
                   {studentValueReleaseDate.toLocaleDateString("en-US", {
                     month: "long",
@@ -145,38 +147,38 @@ export const GuessTable = ({
               <div
                 className={`content-item ${targetStudentValue.year === studentValue.year ? "correct" : "wrong"} ${targetStudentValue.year > studentValue.year ? "more" : ""} ${targetStudentValue.year < studentValue.year ? "less" : ""}`}
               >
-                <span>{studentValue.year}</span>
+                <span className="cannot-select">{studentValue.year}</span>
               </div>
               <div
                 className={`content-item ${targetStudentValue.club === studentValue.club ? "correct" : "wrong"}`}
               >
-                <span style={{ textAlign: "center" }}>
+                <span className="cannot-select text-center">
                   {Club[studentValue.club]}
                 </span>
               </div>
               <div
                 className={`content-item ${targetStudentValue.height === studentValue.height ? "correct" : "wrong"} ${targetStudentValue.height > studentValue.height ? "more" : ""} ${targetStudentValue.height < studentValue.height ? "less" : ""}`}
               >
-                <span>{studentValue.height}</span>
+                <span className="cannot-select">{studentValue.height}</span>
               </div>
               <div
                 className={`content-item ${targetStudentValue.birthday === studentValue.birthday ? "correct" : "wrong"} ${targetStudentValueBirthday > studentValueBirthday ? "more" : ""} ${targetStudentValueBirthday < studentValueBirthday ? "less" : ""}`}
               >
-                <span style={{ textAlign: "center" }}>
+                <span className="cannot-select text-center">
                   {studentValue.birthday}
                 </span>
               </div>
               <div
                 className={`content-item ${targetStudentValue.weaponType === studentValue.weaponType ? "correct" : "wrong"}`}
               >
-                <span style={{ fontSize: "20px" }}>
+                <span className="cannot-select font-size-large">
                   {studentValue.weaponType}
                 </span>
               </div>
               <div
                 className={`content-item ${targetStudentValueReleaseDate.getTime() === studentValueReleaseDate.getTime() ? "correct" : "wrong"} ${targetStudentValueReleaseDate > studentValueReleaseDate ? "more" : ""} ${targetStudentValueReleaseDate < studentValueReleaseDate ? "less" : ""}`}
               >
-                <span style={{ textAlign: "center" }}>
+                <span className="cannot-select text-center">
                   {studentValueReleaseDate.getFullYear()}{" "}
                   {studentValueReleaseDate.toLocaleDateString("en-US", {
                     month: "long",
