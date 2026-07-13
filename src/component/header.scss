@@ -12,9 +12,14 @@
   box-sizing: border-box;
   background-color: #eeeeee;
 
+  > div {
+    flex: 1 0 1px;
+  }
+
   > div:nth-of-type(2) {
     display: flex;
     gap: 8px;
+    justify-content: center;
     align-items: center;
     height: 100%;
   }
