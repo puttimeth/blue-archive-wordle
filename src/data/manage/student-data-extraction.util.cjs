@@ -51,7 +51,7 @@ for (let [_, item] of Object.entries(studentdata)) {
 }
 
 fs.writeFile(
-  "./src/utils/student-data.json",
+  "./src/data/json/student-data.json",
   JSON.stringify(students),
   () => {},
 );
