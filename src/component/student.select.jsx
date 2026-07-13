@@ -1,12 +1,15 @@
 import "./student.select.scss";
 import { Avatar, Select } from "antd";
 import { StudentData } from "data";
+import { useState } from "react";
 
 export const StudentSelect = ({
   selectedStudentsId = [],
   onChange = (e) => {},
   ...rest
 }) => {
+  const [value, setValue] = useState([]);
+
   return (
     <Select
       className="student-select"
@@ -18,8 +21,11 @@ export const StudentSelect = ({
       }
       placeholder="Student name"
       listHeight={512}
-      value=""
-      onChange={onChange}
+      value={value}
+      onChange={(e) => {
+        setValue([]);
+        onChange(e);
+      }}
       options={
         StudentData && Object.entries(StudentData).length > 0
           ? Object.entries(StudentData)
