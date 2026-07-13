@@ -5,6 +5,7 @@ import {
   GuessTable,
   Header,
   HelpModal,
+  MoreProjectModal,
   StudentSelect,
 } from "component";
 import { ContentCategory, GameMode, LSK, StudentData } from "data";
@@ -35,6 +36,7 @@ function App() {
 
   // modal
   const [helpModalStatus, setHelpModalStatus] = useState(false);
+  const [moreProjectModalStatus, setMoreProjectModalStatus] = useState(false);
 
   const randomTargetStudent = () => {
     const randIdx = Math.floor(Math.random() * Object.keys(StudentData).length);
@@ -165,9 +167,16 @@ function App() {
         modalStatus={helpModalStatus}
         setModalStatus={setHelpModalStatus}
       />
+      <MoreProjectModal
+        modalStatus={moreProjectModalStatus}
+        setModalStatus={setMoreProjectModalStatus}
+      />
       <div className="app">
         <div className="bg-image" />
-        <Header setHelpModalStatus={setHelpModalStatus} />
+        <Header
+          setHelpModalStatus={setHelpModalStatus}
+          setMoreProjectModalStatus={setMoreProjectModalStatus}
+        />
         <GameModeRadio
           contentCategory={contentCategory}
           setContentCategory={setContentCategory}
