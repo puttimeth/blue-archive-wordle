@@ -24,23 +24,27 @@ export const HelpModal = ({ modalStatus, setModalStatus }) => (
           Gameplay provides information about in-game mechanics, while Lore
           focuses on students as characters and their backgrounds.
         </span>
-        <small>
-          I tried to group them using information specific to each category, but
-          the Lore category will be very difficult without a 'release date'
-          column, so I will keep the current format until I come up with a
-          better idea.
-        </small>
         <span>
-          There is no scoreboard system, and I have no plan to implement it.
+          EX Skill Costs are the costs of <b>EX Skill at level 5</b>.
         </span>
         <span>
-          EX Skill Costs are the costs of <b>EX Skill at level 5</b>
+          After <b>5</b> attempts, you can select <b>Give Up</b> at the bottom
+          of the screen to reveal the answer.
+        </span>
+        <span>
+          There is no scoreboard system, and I have no plan to implement it.
         </span>
         <span>
           Feel free to create an issue if you found a problem or suggest an
           improvement through Github repo provided below.
         </span>
         <Divider style={{ margin: "0" }} />
+        <small>
+          I tried to group them using information specific to each category, but
+          the Lore category will be very difficult without a 'release date'
+          column, so I will keep the current format until I come up with a
+          better idea.
+        </small>
         <small>
           I created this website as a hobby and do not earn any revenue from it.
           The purpose of this site is to have fun. All assets on this website
