@@ -1,53 +1,58 @@
 import "./app.scss";
-import { Button, ConfigProvider, Radio } from "antd";
-import {
-  AttackDefenseTypeLabel,
-  GiftLabel,
-  Header,
-  RoleLabel,
-  SchoolLabel,
-  SquadTypeLabel,
-  StudentSelect,
-} from "component";
-import { Club, GuessGameMode, StudentData, StudentReleaseDate } from "data";
+import { Button } from "antd";
+import { GameModeRadio, GuessTable, Header, StudentSelect } from "component";
+import { GuessGameMode, GuessPlayMode, LSK, StudentData } from "data";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { IoMdRefresh } from "react-icons/io";
+import { Util } from "utils";
 
 function App() {
-  const guessGameplayColumns = [
-    "Student",
-    "School",
-    "Type",
-    "Role",
-    "Attack Type",
-    "Defense Type",
-    "Weapon Type",
-    "EX Skill Cost",
-    "Release Date",
-  ];
-  const guessLoreColumns = [
-    "Student",
-    "School",
-    "Year",
-    "Club",
-    "Height (cm)",
-    "Birthday",
-    "Weapon Type",
-    "Release Date",
-    "Fav SSR Gift",
-  ];
   const minGuessToGiveUp = 5;
+  const today = Util.getToday();
+  const yesterday = Util.getYesterday();
 
   const [isGameRunning, setIsGameRunning] = useState(true);
   const [isGiveUp, setIsGiveUp] = useState(false);
-  const [gameMode, setGameMode] = useState(GuessGameMode.Gameplay);
+  const [gameMode, setGameMode] = useState(
+    localStorage.getItem(LSK.selectedGameMode) ?? GuessGameMode.Gameplay,
+  );
+  const [playMode, setPlayMode] = useState(
+    localStorage.getItem(LSK.selectedPlayMode) ?? GuessPlayMode.Daily,
+  );
   const [guessStudentsId, setGuessStudentsId] = useState([]);
   const [targetStudentId, setTargetStudentId] = useState("");
+  const [yesterdayTargetStudentId, setYesterdayTargetStudentId] = useState("");
+  // const [today, setToday] = useState(Util.getToday());
+  // const [yesterday, setYesterday] = useState(Util.getYesterday());
+  const [remainingTimeUntilDailyRefresh, setRemainingTimeUntilDailyRefresh] =
+    useState("");
 
   const randomTargetStudent = () => {
     const randIdx = Math.floor(Math.random() * Object.keys(StudentData).length);
     setTargetStudentId(Object.keys(StudentData)[randIdx]);
-    // console.log(StudentData[Object.keys(StudentData)[randIdx]]?.name);
+  };
+
+  const assignTargetStudent = (gameMode) => {
+    const randIdx = Util.getSeededRandomFromDate(
+      gameMode,
+      today,
+      0,
+      Object.keys(StudentData).length,
+    );
+    const assignedStudentId = Object.keys(StudentData)[randIdx];
+    setTargetStudentId(assignedStudentId);
+    return assignedStudentId;
+  };
+
+  const updateYesterdayStudent = () => {
+    const randIdx = Util.getSeededRandomFromDate(
+      gameMode,
+      yesterday,
+      0,
+      Object.keys(StudentData).length,
+    );
+    setYesterdayTargetStudentId(Object.keys(StudentData)[randIdx]);
   };
 
   const chooseStudent = (studentId) => {
@@ -65,15 +70,44 @@ function App() {
     chooseStudent(studentId);
   };
 
-  const changeGameMode = (newGameMode) => {
-    setGameMode(newGameMode);
-    restartGame();
-  };
-
   const restartGame = () => {
-    randomTargetStudent();
+    let assignedStudentId = "";
+    if (playMode === GuessPlayMode.Daily) {
+      assignedStudentId = assignTargetStudent(gameMode);
+    } else {
+      randomTargetStudent();
+    }
+    updateYesterdayStudent();
     setIsGameRunning(true);
     setIsGiveUp(false);
+    if (playMode === GuessPlayMode.Daily) {
+      let lsk = LSK.dailyGuessGameplay;
+      if (gameMode === GuessGameMode.Lore) {
+        lsk = LSK.dailyGuessLore;
+      }
+      let saveData = localStorage.getItem(lsk);
+      if (saveData) {
+        try {
+          saveData = JSON.parse(saveData);
+        } catch (error) {
+          console.error("Cannot read save data with error:", error);
+          setGuessStudentsId([]);
+        }
+        if (saveData.date && dayjs.utc(saveData.date).isSame(today)) {
+          setGuessStudentsId(saveData.guessStudentsId ?? []);
+          setIsGiveUp(saveData.isGiveUp ?? false);
+          // case win
+          if (saveData.guessStudentsId.at(-1) === assignedStudentId) {
+            setIsGameRunning(false);
+          }
+          // case give up
+          if (saveData.isGiveUp) {
+            setIsGameRunning(false);
+          }
+          return;
+        }
+      }
+    }
     setGuessStudentsId([]);
   };
 
@@ -83,40 +117,52 @@ function App() {
   };
 
   useEffect(() => {
-    restartGame();
-    // for (let item of Object.values(StudentData)) {
-    //   if (!StudentReleaseDate[item.name]) {
-    //     console.log(item.name);
-    //   }
-    // }
+    const interval = setInterval(() => {
+      const now = dayjs().utc();
+      const startOfNextDay = dayjs()
+        .utc()
+        .add(1, "day")
+        .startOf("day")
+        .add(19, "hour");
+      const diff = dayjs.duration(startOfNextDay.diff(now));
+      setRemainingTimeUntilDailyRefresh(diff.format("HH:mm:ss"));
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    restartGame();
+  }, [gameMode, playMode]);
+
+  useEffect(() => {
+    if (playMode === GuessPlayMode.Daily) {
+      // update local storage
+      const saveData = {
+        date: today.format("YYYY-MM-DD"),
+        guessStudentsId,
+        isGiveUp,
+      };
+      let lsk = LSK.dailyGuessGameplay;
+      if (gameMode === GuessGameMode.Lore) {
+        lsk = LSK.dailyGuessLore;
+      }
+      localStorage.setItem(lsk, JSON.stringify(saveData));
+    }
+  }, [guessStudentsId, isGameRunning, isGiveUp]);
 
   return (
     <>
       <div className="app">
         <div className="bg-image" />
         <Header />
-        <ConfigProvider
-          theme={{
-            token: {
-              colorPrimary: "#272727",
-            },
-          }}
-        >
-          <Radio.Group
-            block
-            options={[
-              { label: GuessGameMode.Gameplay, value: GuessGameMode.Gameplay },
-              { label: GuessGameMode.Lore, value: GuessGameMode.Lore },
-            ]}
-            defaultValue={GuessGameMode.Gameplay}
-            optionType="button"
-            buttonStyle="solid"
-            onChange={(e) => {
-              changeGameMode(e.target.value);
-            }}
-          />
-        </ConfigProvider>
+        <GameModeRadio
+          gameMode={gameMode}
+          setGameMode={setGameMode}
+          playMode={playMode}
+          setPlayMode={setPlayMode}
+        />
+        {/* Answer student label */}
         {!isGameRunning && (
           <div className="mystery-student-answer">
             <img
@@ -124,14 +170,21 @@ function App() {
               src={`/students/${targetStudentId}.webp`}
               alt=""
             />
-            <span>
-              The mystery student is <b>{StudentData[targetStudentId]?.name}</b>
+            <span style={{ textAlign: "center" }}>
+              The{playMode === GuessPlayMode.Daily ? " daily" : ""} mystery
+              student is <b>{StudentData[targetStudentId]?.name}</b>
             </span>
             {!isGiveUp && (
               <span>You did it in {guessStudentsId.length} tries!</span>
             )}
             {isGiveUp && <span>How did she slip your mind?</span>}
           </div>
+        )}
+        {/* Count down new day label */}
+        {!isGameRunning && playMode === GuessPlayMode.Daily && (
+          <span style={{ textAlign: "center" }}>
+            Daily mystery student refreshs in {remainingTimeUntilDailyRefresh}
+          </span>
         )}
         {isGameRunning && (
           <StudentSelect
@@ -140,187 +193,25 @@ function App() {
             onChange={chooseStudent}
           />
         )}
-        {!isGameRunning && (
+        {/* Restart game button */}
+        {!isGameRunning && playMode === GuessPlayMode.Endless && (
           <Button color="default" variant="solid" onClick={restartGame}>
             <IoMdRefresh size={24} />
           </Button>
         )}
-        <div className={`guess-table ${gameMode.toLowerCase()}`}>
-          <div>
-            {(gameMode === GuessGameMode.Gameplay
-              ? guessGameplayColumns
-              : guessLoreColumns
-            ).map((item) => (
-              <b key={item}>{item}</b>
-            ))}
-          </div>
-          {guessStudentsId.toReversed().map((studentId) => {
-            const targetStudentValue = StudentData[targetStudentId];
-            const studentValue = StudentData[studentId];
-            let giftCompareState = "wrong";
-            const targetStudentValueBirthday = new Date(
-              targetStudentValue.birthday.replace(/st|nd|rd|th/g, ""),
-            );
-            const studentValueBirthday = new Date(
-              studentValue.birthday.replace(/st|nd|rd|th/g, ""),
-            );
-            const targetStudentValueReleaseDate = new Date(
-              StudentReleaseDate[targetStudentValue.name],
-            );
-            const studentValueReleaseDate = new Date(
-              StudentReleaseDate[studentValue.name],
-            );
-
-            if (
-              targetStudentValue.favItem.length ===
-                studentValue.favItem.length &&
-              targetStudentValue.favItem.every((e) =>
-                studentValue.favItem.includes(e),
-              )
-            ) {
-              giftCompareState = "correct";
-            } else if (
-              targetStudentValue.favItem.some((e) =>
-                studentValue.favItem.includes(e),
-              )
-            ) {
-              giftCompareState = "partial";
-            }
-
-            if (gameMode === GuessGameMode.Gameplay)
-              return (
-                <div key={studentId}>
-                  <div
-                    className={`content-item ${targetStudentId === studentId ? "correct" : "wrong"}`}
-                  >
-                    <img
-                      className="student-img"
-                      src={`/students/${studentId}.webp`}
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.school === studentValue.school ? "correct" : "wrong"}`}
-                  >
-                    <SchoolLabel school={studentValue.school} />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.squadType === studentValue.squadType ? "correct" : "wrong"}`}
-                  >
-                    <SquadTypeLabel type={studentValue.squadType} />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.tacticRole === studentValue.tacticRole ? "correct" : "wrong"}`}
-                  >
-                    <RoleLabel role={studentValue.tacticRole} />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.bulletType === studentValue.bulletType ? "correct" : "wrong"}`}
-                  >
-                    <AttackDefenseTypeLabel type={studentValue.bulletType} />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.armorType === studentValue.armorType ? "correct" : "wrong"}`}
-                  >
-                    <AttackDefenseTypeLabel type={studentValue.armorType} />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.weaponType === studentValue.weaponType ? "correct" : "wrong"}`}
-                  >
-                    <span style={{ fontSize: "20px" }}>
-                      {studentValue.weaponType}
-                    </span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.exSkillCost === studentValue.exSkillCost ? "correct" : "wrong"} ${targetStudentValue.exSkillCost > studentValue.exSkillCost ? "more" : ""} ${targetStudentValue.exSkillCost < studentValue.exSkillCost ? "less" : ""}`}
-                  >
-                    <span style={{ fontSize: "20px" }}>
-                      {studentValue.exSkillCost}
-                    </span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValueReleaseDate.getTime() === studentValueReleaseDate.getTime() ? "correct" : "wrong"} ${targetStudentValueReleaseDate > studentValueReleaseDate ? "more" : ""} ${targetStudentValueReleaseDate < studentValueReleaseDate ? "less" : ""}`}
-                  >
-                    <span style={{ textAlign: "center" }}>
-                      {studentValueReleaseDate.getFullYear()}{" "}
-                      {studentValueReleaseDate.toLocaleDateString("en-US", {
-                        month: "long",
-                      })}
-                    </span>
-                  </div>
-                </div>
-              );
-            else if (gameMode === GuessGameMode.Lore)
-              return (
-                <div key={studentId}>
-                  <div
-                    className={`content-item ${targetStudentId === studentId ? "correct" : "wrong"}`}
-                  >
-                    <img
-                      className="student-img"
-                      src={`/students/${studentId}.webp`}
-                      alt=""
-                    />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.school === studentValue.school ? "correct" : "wrong"}`}
-                  >
-                    <SchoolLabel school={studentValue.school} />
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.year === studentValue.year ? "correct" : "wrong"} ${targetStudentValue.year > studentValue.year ? "more" : ""} ${targetStudentValue.year < studentValue.year ? "less" : ""}`}
-                  >
-                    <span>{studentValue.year}</span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.club === studentValue.club ? "correct" : "wrong"}`}
-                  >
-                    <span style={{ textAlign: "center" }}>
-                      {Club[studentValue.club]}
-                    </span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.height === studentValue.height ? "correct" : "wrong"} ${targetStudentValue.height > studentValue.height ? "more" : ""} ${targetStudentValue.height < studentValue.height ? "less" : ""}`}
-                  >
-                    <span>{studentValue.height}</span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.birthday === studentValue.birthday ? "correct" : "wrong"} ${targetStudentValueBirthday > studentValueBirthday ? "more" : ""} ${targetStudentValueBirthday < studentValueBirthday ? "less" : ""}`}
-                  >
-                    <span style={{ textAlign: "center" }}>
-                      {studentValue.birthday}
-                    </span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValue.weaponType === studentValue.weaponType ? "correct" : "wrong"}`}
-                  >
-                    <span style={{ fontSize: "20px" }}>
-                      {studentValue.weaponType}
-                    </span>
-                  </div>
-                  <div
-                    className={`content-item ${targetStudentValueReleaseDate.getTime() === studentValueReleaseDate.getTime() ? "correct" : "wrong"} ${targetStudentValueReleaseDate > studentValueReleaseDate ? "more" : ""} ${targetStudentValueReleaseDate < studentValueReleaseDate ? "less" : ""}`}
-                  >
-                    <span style={{ textAlign: "center" }}>
-                      {studentValueReleaseDate.getFullYear()}{" "}
-                      {studentValueReleaseDate.toLocaleDateString("en-US", {
-                        month: "long",
-                      })}
-                    </span>
-                  </div>
-                  <div className={`content-item ${giftCompareState}`}>
-                    <GiftLabel gifts={studentValue.favItem} />
-                  </div>
-                </div>
-              );
-          })}
-        </div>
+        <GuessTable
+          gameMode={gameMode}
+          guessStudentsId={guessStudentsId}
+          targetStudentId={targetStudentId}
+        />
+        {/* Pick someone button */}
         {guessStudentsId.length === 0 && (
           <div className="pick-someone-container">
             <Button onClick={chooseRandomStudent}>Pick someone for me</Button>
           </div>
         )}
-        {!isGameRunning &&
+        {/* I give up button */}
+        {isGameRunning &&
           !isGiveUp &&
           guessStudentsId.length >= minGuessToGiveUp && (
             <Button
@@ -332,6 +223,18 @@ function App() {
               I give up
             </Button>
           )}
+        {/* Yesterday's student label */}
+        {playMode === GuessPlayMode.Daily && guessStudentsId.length === 0 && (
+          <div className="mystery-student-answer">
+            <img
+              className="student-img"
+              src={`/students/${yesterdayTargetStudentId}.webp`}
+              alt=""
+            />
+            <span>Yesterday's student was </span>
+            <b>{StudentData[yesterdayTargetStudentId]?.name}</b>
+          </div>
+        )}
       </div>
     </>
   );

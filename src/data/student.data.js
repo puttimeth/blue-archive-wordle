@@ -1,5 +1,5 @@
-import StudentData from "./student-data.json";
-import StudentReleaseDate from "./student-release-date.json";
+import StudentData from "./json/student-data.json";
+import StudentReleaseDate from "./json/student-release-date.json";
 
 export const StudentRole = {
   Tanker: "Tank",
